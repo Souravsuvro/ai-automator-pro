@@ -1,5 +1,7 @@
 /**
- * AI Automator Pro — Generation Engine (compact + API)
+ * AI Automator Pro — Generation Engine
+ * generate() is synchronous (local templates) for max compatibility.
+ * generateAsync() tries /api/generate then falls back to local.
  */
 const Generators = (() => {
   function industryPhrase(p) { return p.industryCustom || p.industry || 'your business'; }
@@ -30,25 +32,25 @@ const Generators = (() => {
     const title = titles[featureId] || featureId;
     if (featureId === 'wix-ai-instructions') {
       return { title, sections: [
-        { heading: '1. Master Site Rewrite Prompt', content: `You are an expert Wix designer for ${ind}.\nBusiness: ${name}\nLocation: ${loc}\nAudience: ${aud}\nVoice: ${tone}\nUSP: ${usp}\n\nRewrite homepage, about, services, contact with benefit-led headlines and clear CTAs.` },
-        { heading: '2. Content Package', content: `SEO title, meta, about (150-200 words), 4 services, 3 testimonials, 5 FAQs for ${name}. Reinforce: ${usp}.` },
+        { heading: '1. Master Site Rewrite Prompt', content: 'You are an expert Wix designer for ' + ind + '.\nBusiness: ' + name + '\nLocation: ' + loc + '\nAudience: ' + aud + '\nVoice: ' + tone + '\nUSP: ' + usp + '\n\nRewrite homepage, about, services, contact with benefit-led headlines and clear CTAs.' },
+        { heading: '2. Content Package', content: 'SEO title, meta, about (150-200 words), 4 services, 3 testimonials, 5 FAQs for ' + name + '. Reinforce: ' + usp + '.' },
         { heading: '3. How to use in Wix', content: 'Editor → text → AI → paste Master Prompt → iterate → apply page by page.' },
       ], meta: { feature: featureId, engine: 'local' } };
     }
     if (featureId === 'seo-blueprint' || featureId === 'external-links') {
       return { title, sections: [
-        { heading: 'Keywords & Meta', content: `Primary: ${ind} ${loc}\nTitle: ${name} | Trusted ${ind} in ${loc}\nMeta: Reliable ${ind} in ${loc}. ${usp}.` },
+        { heading: 'Keywords & Meta', content: 'Primary: ' + ind + ' ' + loc + '\nTitle: ' + name + ' | Trusted ' + ind + ' in ' + loc },
         { heading: 'External Citations (test after add)', content: 'Google Business Profile\nBing Places\nApple Business Connect\nLocal chamber\nNiche directories\nQA: HTTPS, mobile, NAP, no broken redirects' },
       ], meta: { feature: featureId, engine: 'local' } };
     }
     if (featureId === 'brand-voice') {
       return { title, sections: [
-        { heading: 'Voice Profile', content: `Target: ${tone}\nUSP: ${usp}\nAudience: ${aud}` },
-        { heading: 'Analysis', content: extra ? `Sample (${extra.length} chars). Align to ${tone}; protect USP.` : 'Paste sample copy and re-run for a live check.' },
+        { heading: 'Voice Profile', content: 'Target: ' + tone + '\nUSP: ' + usp + '\nAudience: ' + aud },
+        { heading: 'Analysis', content: extra ? ('Sample (' + extra.length + ' chars). Align to ' + tone + '.') : 'Paste sample copy and re-run.' },
       ], meta: { feature: featureId, engine: 'local' } };
     }
     return { title, sections: [
-      { heading: 'Overview', content: `${title} for ${name} (${ind}) → ${aud} in ${loc}. Voice: ${tone}. USP: ${usp}.` },
+      { heading: 'Overview', content: title + ' for ' + name + ' (' + ind + ') → ' + aud + ' in ' + loc + '. Voice: ' + tone + '. USP: ' + usp + '.' },
       { heading: 'Next actions', content: '1. Align homepage CTA\n2. Publish one SEO page\n3. Enable new-lead automation\n4. Add 2 external citations' + (extra ? '\n\n' + extra : '') },
     ], meta: { feature: featureId, engine: 'local' } };
   }
@@ -63,29 +65,32 @@ const Generators = (() => {
     'external-links': { name: 'External Links & Citations', description: 'Directories, outreach, link QA', icon: 'link' },
     'mobile-pwa': { name: 'Mobile & PWA Pack', description: 'Mobile UX and app-like delivery', icon: 'smartphone' },
   };
-  Object.keys(FEATURES).forEach((id) => {
-    FEATURES[id].generate = (p, extra) => local(id, p, extra);
+  Object.keys(FEATURES).forEach(function (id) {
+    FEATURES[id].generate = function (p, extra) { return local(id, p, extra); };
   });
   function listFeatures() {
-    return Object.entries(FEATURES).map(([id, f]) => ({
-      id, name: f.name, description: f.description, icon: f.icon,
-      flagship: !!f.flagship, needsExtra: !!f.needsExtra,
-    }));
+    return Object.entries(FEATURES).map(function (entry) {
+      var id = entry[0], f = entry[1];
+      return { id: id, name: f.name, description: f.description, icon: f.icon, flagship: !!f.flagship, needsExtra: !!f.needsExtra };
+    });
   }
-  async function generate(featureId, profile, extra = '') {
+  function generate(featureId, profile, extra) {
     if (!featureId || !profile) throw new Error('featureId and profile required');
+    return local(featureId, profile, extra || '');
+  }
+  async function generateAsync(featureId, profile, extra) {
     try {
-      const res = await fetch('/api/generate', {
+      var res = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ featureId, profile, extra }),
+        body: JSON.stringify({ featureId: featureId, profile: profile, extra: extra || '' }),
       });
       if (res.ok) {
-        const data = await res.json();
+        var data = await res.json();
         if (data && data.sections) return data;
       }
-    } catch (_) {}
-    return local(featureId, profile, extra);
+    } catch (e) {}
+    return local(featureId, profile, extra || '');
   }
-  return { listFeatures, generate, generateLocal: local, FEATURES };
+  return { listFeatures: listFeatures, generate: generate, generateAsync: generateAsync, generateLocal: local, FEATURES: FEATURES };
 })();
