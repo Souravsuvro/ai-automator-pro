@@ -4,6 +4,7 @@ module.exports = async function handler(req, res) {
   res.status(200).json({
     ok: true,
     service: 'AI Automator Pro',
+    version: '1.2.0',
     llmConfigured: hasKey,
     engine: hasKey ? 'llm+template-fallback' : 'template',
     time: new Date().toISOString(),

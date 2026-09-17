@@ -1,31 +1,34 @@
 # AI Automator Pro
 
-**AI-powered SaaS Business Autopilot for Wix users & Partners**
-
-Turns a one-time Business DNA profile into Wix AI instructions, SEO blueprints, content calendars, automations, email sequences, external citation plans, and mobile/PWA guidance.
+AI-powered Business Autopilot SaaS for **Wix** site owners and Partners (2026-ready).
 
 ## Live
 
-- Production: https://ai-automator-pro.vercel.app
+- App: https://ai-automator-pro.vercel.app
 - Repo: https://github.com/Souravsuvro/ai-automator-pro
+- Privacy: https://ai-automator-pro.vercel.app/privacy.html
+
+## What it does
+
+One **Business DNA** profile powers Wix AI instructions, SEO, content calendars, automations, email sequences, brand voice checks, external citations, and mobile/PWA packs.
 
 ## Stack
 
-- Frontend: HTML + Tailwind + vanilla JS SPA (iframe-ready)
-- Backend: Vercel serverless `/api/generate`, `/api/health`
-- AI: OpenAI-compatible when `OPENAI_API_KEY` is set; template fallback always works
-- SEO: meta, OG, JSON-LD, robots.txt, sitemap.xml
-- Mobile: responsive + PWA manifest
+| Layer | Detail |
+|-------|--------|
+| Frontend | Static HTML/JS SPA, iframe-safe (`frame-ancestors *`) |
+| Backend | Vercel `/api/generate`, `/api/health` |
+| AI | OpenAI-compatible when `OPENAI_API_KEY` set; template fallback always on |
+| Wix | Reads dashboard `instance` query param; embed or Dashboard page extension |
+| Compliance | Privacy page, local data clear, freemium limits |
 
-## Env vars (Vercel)
+## Env (Vercel)
 
-| Variable | Purpose |
-|----------|--------|
-| `OPENAI_API_KEY` or `AI_API_KEY` | Real LLM |
-| `OPENAI_BASE_URL` | Optional custom endpoint |
-| `AI_MODEL` | Default `gpt-4o-mini` |
+- `OPENAI_API_KEY` or `AI_API_KEY` — optional LLM
+- `OPENAI_BASE_URL` — optional
+- `AI_MODEL` — default `gpt-4o-mini`
 
-## Embed on Wix
+## Embed
 
 ```html
 <iframe
@@ -39,9 +42,9 @@ Turns a one-time Business DNA profile into Wix AI instructions, SEO blueprints, 
 ></iframe>
 ```
 
-## Wix Partner submission
+## Partner / App Market
 
-See `docs/PARTNER_SUBMISSION.md`. Submission is completed in the Wix Dev Center (not available via API).
+See docs/PARTNER_SUBMISSION.md
 
 ## License
 
