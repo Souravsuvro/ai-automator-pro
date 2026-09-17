@@ -1,6 +1,6 @@
 {
   "name": "ai-automator-pro",
   "private": true,
-  "version": "1.2.0",
-  "description": "AI Automator Pro — Wix Business Autopilot SaaS"
+  "version": "1.4.0",
+  "description": "AI Automator Pro — multi-tenant Wix SaaS with auth, Stripe, instance verification"
 }

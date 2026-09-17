@@ -1,32 +1,30 @@
-# AI Automator Pro v1.3
+# AI Automator Pro v1.4
 
-AI Business Autopilot for **Wix** — complements Wix AI / Aria / Marketing Agent with ready-to-paste prompts, SEO, FAQ schema for AI search, and automations.
+Multi-tenant SaaS for Wix: Business DNA → Wix AI prompts, SEO, FAQ schema, automations.
 
-## Research-backed improvements (2026)
+## v1.4 upgrades
 
-- **Vercel routing**: SPA rewrite with `cleanUrls` → destination `/index` (fixes root 404)
-- **Wix dashboard UX**: primary actions above the fold, max width 1248px, fictional demo DNA
-- **Freemium clarity**: Pro tip badges on advanced packs
-- **AI search**: FAQ + JSON-LD schema generator
-- **Iframe-safe**: `frame-ancestors *` for Wix HTML & Dashboard extensions
-- **In-app FAQ** for Market support expectations
+- **Real auth** — register/login JWT (`/api/auth/*`), scrypt password hashing
+- **Stripe Checkout** — `/api/stripe/checkout`, Customer Portal, webhooks → tier sync
+- **Wix instance verification** — HMAC-SHA256 of `instance` query param (`WIX_APP_SECRET`)
+- **Tenant binding** — `wixInstanceId` on user + Stripe metadata
+- **Optional Redis** — Upstash REST for durable multi-instance storage
 
-## Live
+## Env
 
-- https://ai-automator-pro.vercel.app/
-- Privacy: /privacy.html
+See [docs/ENV.md](docs/ENV.md)
 
-## Embed
+## API
 
-```html
-<iframe src="https://ai-automator-pro.vercel.app/" width="100%" height="900"
-  style="border:0;border-radius:12px;" title="AI Automator Pro"
-  loading="lazy" allow="clipboard-write"></iframe>
-```
-
-## Partner
-
-See `docs/PARTNER_SUBMISSION.md`
+| Endpoint | Auth | Description |
+|----------|------|-------------|
+| `POST /api/auth/register` | — | Create account |
+| `POST /api/auth/login` | — | Login |
+| `GET /api/auth/me` | Bearer | Current user |
+| `POST /api/wix/verify` | — | Verify Wix instance |
+| `POST /api/stripe/checkout` | Bearer | Start Checkout |
+| `POST /api/stripe/portal` | Bearer | Billing portal |
+| `POST /api/stripe/webhook` | Stripe sig | Subscription lifecycle |
 
 ## License
 
