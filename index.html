@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Automator Pro — One-Click Business Autopilot for Wix</title>
+  <meta name="description" content="Generate tailored Wix AI instructions, SEO blueprints, content calendars, automation recipes and more from a single Business DNA profile. Built for Wix site owners who want results without prompt engineering." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              200: '#ddd6fe',
+              300: '#c4b5fd',
+              400: '#a78bfa',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              800: '#5b21b6',
+              900: '#4c1d95',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.4s ease-out',
+            'slide-up': 'slideUp 0.4s ease-out',
+            'pulse-soft': 'pulseSoft 2s infinite',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            slideUp: { '0%': { opacity: '0', transform: 'translateY(12px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            pulseSoft: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0.7' } },
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/font/lucide.min.css">
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .glass { background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); }
+    .dark-glass { background: rgba(15,23,42,0.75); backdrop-filter: blur(12px); }
+    .gradient-bg {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #312e81 70%, #4c1d95 100%);
+    }
+    .card-hover { transition: all 0.25s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(124, 58, 237, 0.25); }
+    .prose-output { white-space: pre-wrap; line-height: 1.65; }
+    .watermark {
+      position: relative;
+    }
+    .watermark::after {
+      content: "Generated with AI Automator Pro Free • Upgrade for clean export";
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      font-size: 11px;
+      color: #94a3b8;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #c4b5fd; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a78bfa; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen">
+  <!-- App Root -->
+  <div id="app" class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header id="header" class="sticky top-0 z-50 glass border-b border-slate-200/80">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="App.navigate('home')">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-lg shadow-brand-500/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
+          </div>
+          <div>
+            <span class="font-bold text-lg tracking-tight text-slate-900">AI Automator <span class="text-brand-600">Pro</span></span>
+            <span class="hidden sm:inline-block ml-2 text-xs font-medium bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full">Wix Edition</span>
+          </div>
+        </div>
+        <nav class="flex items-center gap-2 sm:gap-4">
+          <button onclick="App.navigate('pricing')" class="text-sm font-medium text-slate-600 hover:text-brand-600 transition">Pricing</button>
+          <button id="btn-dashboard" onclick="App.navigate('dashboard')" class="hidden text-sm font-medium text-slate-600 hover:text-brand-600 transition">Dashboard</button>
+          <div id="tier-badge" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+            Free
+          </div>
+          <button id="btn-upgrade" onclick="App.navigate('pricing')" class="text-sm font-semibold bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 rounded-lg shadow-sm shadow-brand-600/25 transition">
+            Upgrade
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main" class="flex-1">
+      <!-- Views injected here -->
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 bg-white py-8 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-slate-500">
+        <div class="flex items-center gap-2">
+          <span class="font-semibold text-slate-700">AI Automator Pro</span>
+          <span>· Built for Wix site owners</span>
+        </div>
+        <div class="flex items-center gap-6">
+          <button onclick="App.navigate('embed')" class="hover:text-brand-600 transition">Embed Guide</button>
+          <button onclick="App.navigate('docs')" class="hover:text-brand-600 transition">Docs</button>
+          <a href="https://github.com/Souravsuvro/ai-automator-pro" target="_blank" class="hover:text-brand-600 transition">GitHub</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-6 right-6 z-[100] hidden animate-slide-up">
+    <div class="bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 max-w-sm">
+      <span id="toast-icon"></span>
+      <span id="toast-msg" class="text-sm font-medium"></span>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/storage.js"></script>
+  <script src="js/generators.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
