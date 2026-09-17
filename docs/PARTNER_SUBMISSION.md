@@ -1,20 +1,34 @@
-# Wix Partner / App Market Submission
+# Wix Partner / App Market Submission (2026)
 
-## Product
+Aligned with Wix App Market Guidelines, Blocks publish flow, and automated AI review.
 
-AI Automator Pro — SaaS for Wix site owners and Partners. Business DNA → AI instructions, SEO, content, automations, citations, mobile guidance.
+## Positioning
 
-## Billing reality
+AI Automator Pro integrates with Wix workflows (Wix AI prompts, Automations/Velo, SEO, content). Distributable as a self-hosted Dashboard iframe today and as a Blocks/Market app after review. Blocks apps are not supported in Wix Harmony.
 
-Wix Market billing only works for approved native apps. Standalone iframe SaaS uses external billing (Stripe etc.) until Market approval.
+## Requirements we implement
 
-## You must submit in Dev Center
+- HTTPS iframe URLs
+- Dashboard query params: instance, locale, viewMode, siteUrl, isPublish
+- Free tier includes core features (freemium pattern)
+- Privacy policy URL (`/privacy.html`)
+- Graceful API errors with template fallback
+- Plan-aware UX (free limits vs Pro unlimited)
 
-1. https://dev.wix.com → My Apps → Create (Blocks recommended)
-2. Name: AI Automator Pro
-3. Dashboard: HTML component embedding https://ai-automator-pro.vercel.app
-4. Minimal permissions
-5. Listing copy, screenshots, privacy/terms URLs
-6. Submit for review
+## Market listing
 
-Listing short: One-click Wix AI instructions, SEO, content, and automations from a Business DNA profile.
+**Name:** AI Automator Pro  
+**Teaser:** One-click Wix AI & growth playbooks  
+**Features:** Business DNA profile; Wix AI prompts; SEO, calendars, automations & citations
+
+## Publish steps
+
+1. Wix Studio → Custom Apps / Blocks
+2. Dashboard page extension → iframe `https://ai-automator-pro.vercel.app/`
+3. Complete Market Listing; resolve Blockers
+4. Submit & Publish (automated AI review)
+5. Fix any new blockers and resubmit
+
+See: https://dev.wix.com/docs/build-apps/develop-your-app/develop-an-app-with-blocks/publish-blocks-apps-to-the-app-market/publish-a-blocks-app-to-the-app-market
+
+Partner Center final submit cannot be automated from this repository tooling.

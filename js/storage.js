@@ -1,7 +1,6 @@
 /**
  * AI Automator Pro — Local Storage Layer
- * Handles Business DNA profile, usage limits, subscription tier simulation.
- * In production, replace with real auth + backend (Supabase / Firebase / your API).
+ * Profile, usage, tier, and optional Wix dashboard instance context.
  */
 
 const Storage = (() => {
@@ -10,6 +9,7 @@ const Storage = (() => {
     USAGE: 'aap_usage_v1',
     TIER: 'aap_tier_v1',
     HISTORY: 'aap_history_v1',
+    INSTANCE: 'aap_wix_instance_v1',
   };
 
   const DEFAULT_USAGE = {
@@ -36,7 +36,6 @@ const Storage = (() => {
     localStorage.setItem(key, JSON.stringify(value));
   }
 
-  // --- Profile ---
   function getProfile() {
     return get(KEYS.PROFILE, null);
   }
@@ -55,9 +54,8 @@ const Storage = (() => {
     localStorage.removeItem(KEYS.PROFILE);
   }
 
-  // --- Tier ---
   function getTier() {
-    return get(KEYS.TIER, 'free'); // free | pro | business
+    return get(KEYS.TIER, 'free');
   }
 
   function setTier(tier) {
@@ -65,7 +63,6 @@ const Storage = (() => {
     set(KEYS.TIER, tier);
   }
 
-  // --- Usage ---
   function getUsage() {
     let usage = get(KEYS.USAGE, DEFAULT_USAGE);
     const currentMonth = getMonthKey();
@@ -89,15 +86,9 @@ const Storage = (() => {
     const usage = getUsage();
     const limit = 3;
     const remaining = Math.max(0, limit - usage.generations);
-    return {
-      ok: remaining > 0,
-      remaining,
-      limit,
-      used: usage.generations,
-    };
+    return { ok: remaining > 0, remaining, limit, used: usage.generations };
   }
 
-  // --- History (last 20 generations) ---
   function getHistory() {
     return get(KEYS.HISTORY, []);
   }
@@ -116,6 +107,34 @@ const Storage = (() => {
     Object.values(KEYS).forEach((k) => localStorage.removeItem(k));
   }
 
+  function getInstance() {
+    return get(KEYS.INSTANCE, null);
+  }
+
+  function setInstance(payload) {
+    set(KEYS.INSTANCE, payload);
+  }
+
+  function captureWixContextFromUrl() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const instance = params.get('instance');
+      if (!instance) return null;
+      const ctx = {
+        instance,
+        locale: params.get('locale') || 'en',
+        viewMode: params.get('viewMode') || '',
+        siteUrl: params.get('siteUrl') || '',
+        isPublish: params.get('isPublish') === 'true',
+        capturedAt: new Date().toISOString(),
+      };
+      setInstance(ctx);
+      return ctx;
+    } catch {
+      return null;
+    }
+  }
+
   return {
     getProfile,
     saveProfile,
@@ -128,5 +147,8 @@ const Storage = (() => {
     getHistory,
     addToHistory,
     clearAll,
+    getInstance,
+    setInstance,
+    captureWixContextFromUrl,
   };
 })();
