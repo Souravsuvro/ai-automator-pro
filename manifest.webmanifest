@@ -1,0 +1,18 @@
+{
+  "name": "AI Automator Pro — Wix Business Autopilot",
+  "short_name": "AI Automator",
+  "description": "One-Click Business Autopilot for Wix: AI instructions, SEO, content, automations.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#7c3aed",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='28' fill='%237c3aed'/%3E%3Cpath d='M64 28v16M86 42l12-12M100 64h16M86 86l12 12M64 100v16M42 86L30 98M28 64H12M42 42L30 30' stroke='white' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
