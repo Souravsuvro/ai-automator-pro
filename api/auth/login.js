@@ -12,7 +12,8 @@ module.exports = async function handler(req, res) {
     if (!user || !verifyPassword(password, user.passwordHash)) return res.status(401).json({ error: 'Invalid credentials' });
     if (wixInstance) {
       const parsed = parseAndVerifyInstance(wixInstance);
-      if (parsed.ok && parsed.data.instanceId) {
+      if (!parsed.ok || !parsed.verified) return res.status(401).json({ error: parsed.error || 'Wix instance signature is not verified' });
+      if (parsed.data.instanceId) {
         user.wixInstanceId = parsed.data.instanceId;
         user.wixMeta = { verified: !!parsed.verified, siteOwnerId: parsed.data.siteOwnerId, uid: parsed.data.uid };
         await saveUser(user);

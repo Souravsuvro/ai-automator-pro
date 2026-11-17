@@ -2,5 +2,8 @@
   "name": "ai-automator-pro",
   "private": true,
   "version": "1.4.0",
-  "description": "AI Automator Pro — multi-tenant Wix SaaS with auth, Stripe, instance verification"
+  "description": "AI Automator Pro — multi-tenant Wix SaaS with auth, Stripe, instance verification",
+  "scripts": {
+    "test": "node --test tests/security.test.js"
+  }
 }
