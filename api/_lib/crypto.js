@@ -8,7 +8,11 @@ function b64urlDecode(str) {
   return Buffer.from(str, 'base64');
 }
 function getJwtSecret() {
-  return process.env.JWT_SECRET || process.env.APP_SECRET || 'dev-only-change-me-in-production';
+  const secret = process.env.JWT_SECRET || '';
+  if (!secret || Buffer.byteLength(secret, 'utf8') < 32) {
+    throw new Error('JWT_SECRET must be configured with at least 32 bytes.');
+  }
+  return secret;
 }
 function signJwt(payload, expiresInSec = 60 * 60 * 24 * 30) {
   const header = { alg: 'HS256', typ: 'JWT' };
@@ -25,7 +29,11 @@ function verifyJwt(token) {
   if (parts.length !== 3) return null;
   const [h, p, s] = parts;
   const expected = crypto.createHmac('sha256', getJwtSecret()).update(h + '.' + p).digest('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-  try { if (!crypto.timingSafeEqual(Buffer.from(s), Buffer.from(expected))) return null; } catch (_) { return null; }
+  try {
+    const supplied = Buffer.from(s);
+    const calculated = Buffer.from(expected);
+    if (supplied.length !== calculated.length || !crypto.timingSafeEqual(supplied, calculated)) return null;
+  } catch (_) { return null; }
   try {
     const payload = JSON.parse(b64urlDecode(p).toString('utf8'));
     if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
