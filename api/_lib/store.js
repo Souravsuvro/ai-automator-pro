@@ -66,14 +66,17 @@ async function claimStripeEvent(eventId) {
   if (!eventId) throw new Error('Stripe event ID is required');
   if (isRedisConfigured()) {
     const result = await redis('SET', ['stripe:event:' + eventId, 'processing', 'NX', 'EX', 300]);
-    return result === 'OK';
+    if (result === 'OK') return 'claimed';
+    const current = await redis('GET', ['stripe:event:' + eventId]);
+    return current === 'processed' ? 'processed' : 'processing';
   }
   if (process.env.NODE_ENV === 'production') {
     throw new Error('Durable Stripe webhook idempotency requires Upstash Redis in production.');
   }
-  if (memory.stripeEvents[eventId]) return false;
+  if (memory.stripeEvents[eventId] === 'processed') return 'processed';
+  if (memory.stripeEvents[eventId]) return 'processing';
   memory.stripeEvents[eventId] = 'processing';
-  return true;
+  return 'claimed';
 }
 async function markStripeEventProcessed(eventId) {
   if (isRedisConfigured()) {
