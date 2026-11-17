@@ -58,16 +58,27 @@ function constructWebhookEvent(rawBody, signature) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!secret) throw new Error('STRIPE_WEBHOOK_SECRET not set');
   const crypto = require('crypto');
-  const parts = {};
-  (signature || '').split(',').forEach(function (p) { const kv = p.split('='); parts[kv[0]] = kv[1]; });
-  const ts = parts.t, sig = parts.v1;
-  if (!ts || !sig || !/^\d+$/.test(ts)) throw new Error('Invalid Stripe-Signature');
-  const expected = crypto.createHmac('sha256', secret).update(ts + '.' + rawBody, 'utf8').digest('hex');
-  const expectedBuffer = Buffer.from(expected, 'hex');
-  let suppliedBuffer;
-  try { suppliedBuffer = Buffer.from(sig, 'hex'); } catch (_) { throw new Error('Invalid Stripe-Signature'); }
-  if (suppliedBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(expectedBuffer, suppliedBuffer)) throw new Error('Webhook signature mismatch');
-  if (Math.abs(Date.now() / 1000 - Number(ts)) > 300) throw new Error('Webhook timestamp too old');
+  let timestamp = null;
+  const signatures = [];
+  (signature || '').split(',').forEach(function (part) {
+    const separator = part.indexOf('=');
+    if (separator < 0) return;
+    const key = part.slice(0, separator).trim();
+    const value = part.slice(separator + 1).trim();
+    if (key === 't') timestamp = value;
+    if (key === 'v1') signatures.push(value);
+  });
+  if (!timestamp || !/^\d+$/.test(timestamp) || signatures.length === 0) {
+    throw new Error('Invalid Stripe-Signature');
+  }
+  const expected = crypto.createHmac('sha256', secret).update(timestamp + '.' + rawBody, 'utf8').digest();
+  const valid = signatures.some(function (candidate) {
+    if (!/^[a-f0-9]{64}$/i.test(candidate)) return false;
+    const supplied = Buffer.from(candidate, 'hex');
+    return supplied.length === expected.length && crypto.timingSafeEqual(expected, supplied);
+  });
+  if (!valid) throw new Error('Webhook signature mismatch');
+  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) throw new Error('Webhook timestamp too old');
   return JSON.parse(rawBody);
 }
 module.exports = { getSecret, getPriceId, planFromPriceId, stripeFetch, formBody, createCheckoutSession, createPortalSession, constructWebhookEvent };
