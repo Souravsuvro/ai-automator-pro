@@ -25,8 +25,9 @@ module.exports = async function handler(req, res) {
     const event = constructWebhookEvent(rawBody, req.headers['stripe-signature']);
     if (!event || !event.id || !event.type) return res.status(400).json({ error: 'Invalid Stripe event envelope' });
 
-    const claimed = await claimStripeEvent(event.id);
-    if (!claimed) return res.status(200).json({ received: true, duplicate: true });
+    const claim = await claimStripeEvent(event.id);
+    if (claim === 'processed') return res.status(200).json({ received: true, duplicate: true });
+    if (claim !== 'claimed') return res.status(409).json({ error: 'Stripe event is already being processed; retry delivery' });
     claimedEventId = event.id;
 
     const type = event.type;
