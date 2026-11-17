@@ -4,7 +4,7 @@
 
 | Variable | Purpose |
 |----------|---------|
-| `JWT_SECRET` | Long random string for signing auth tokens |
+| `JWT_SECRET` | Required: cryptographically random secret of at least 32 bytes for signing auth tokens |
 | `STRIPE_SECRET_KEY` | Stripe secret key |
 | `STRIPE_PRICE_PRO` | Price ID for Pro |
 | `STRIPE_PRICE_BUSINESS` | Price ID for Business |
@@ -17,7 +17,7 @@
 |----------|---------|
 | `WIX_APP_SECRET` | App Secret from Wix Dev Center → OAuth |
 
-Without `WIX_APP_SECRET`, instance payloads are decoded but **not** signature-verified (dev only).
+`WIX_APP_SECRET` is mandatory whenever Wix instance payloads are accepted. Missing configuration fails closed; unsigned instance payloads are never trusted.
 
 ## Optional persistence
 
@@ -26,7 +26,7 @@ Without `WIX_APP_SECRET`, instance payloads are decoded but **not** signature-ve
 | `UPSTASH_REDIS_REST_URL` | Upstash Redis REST URL |
 | `UPSTASH_REDIS_REST_TOKEN` | Upstash token |
 
-Without Redis, accounts use process memory (not durable across cold starts).
+Upstash Redis is mandatory in production for durable account storage and webhook idempotency. Process memory is permitted only for local development; production requests fail closed if Redis is missing.
 
 ## AI
 
@@ -34,6 +34,12 @@ Without Redis, accounts use process memory (not durable across cold starts).
 |----------|---------|
 | `OPENAI_API_KEY` | LLM generations |
 | `AI_MODEL` | Default `gpt-4o-mini` |
+
+## Stripe webhook security
+
+- Configure `STRIPE_WEBHOOK_SECRET` for the exact Stripe endpoint and mode (test/live).
+- The webhook endpoint verifies the raw request body and signature; it rejects requests when the secret is missing.
+- Durable event deduplication requires Upstash Redis in production.
 
 ## Stripe checklist
 
