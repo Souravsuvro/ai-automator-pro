@@ -8,7 +8,7 @@ module.exports = async function handler(req, res) {
     const { instance } = req.body || {};
     if (!instance) return res.status(400).json({ error: 'instance required' });
     const result = parseAndVerifyInstance(instance);
-    if (!result.ok) return res.status(401).json({ error: result.error });
+    if (!result.ok || !result.verified) return res.status(401).json({ error: result.error || 'Wix instance signature is not verified' });
     return res.status(200).json({
       verified: !!result.verified,
       warning: result.warning || null,
