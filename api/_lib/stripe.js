@@ -61,9 +61,12 @@ function constructWebhookEvent(rawBody, signature) {
   const parts = {};
   (signature || '').split(',').forEach(function (p) { const kv = p.split('='); parts[kv[0]] = kv[1]; });
   const ts = parts.t, sig = parts.v1;
-  if (!ts || !sig) throw new Error('Invalid Stripe-Signature');
+  if (!ts || !sig || !/^\\d+$/.test(ts)) throw new Error('Invalid Stripe-Signature');
   const expected = crypto.createHmac('sha256', secret).update(ts + '.' + rawBody, 'utf8').digest('hex');
-  if (!crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(sig))) throw new Error('Webhook signature mismatch');
+  const expectedBuffer = Buffer.from(expected, 'hex');
+  let suppliedBuffer;
+  try { suppliedBuffer = Buffer.from(sig, 'hex'); } catch (_) { throw new Error('Invalid Stripe-Signature'); }
+  if (suppliedBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(expectedBuffer, suppliedBuffer)) throw new Error('Webhook signature mismatch');
   if (Math.abs(Date.now() / 1000 - Number(ts)) > 300) throw new Error('Webhook timestamp too old');
   return JSON.parse(rawBody);
 }
