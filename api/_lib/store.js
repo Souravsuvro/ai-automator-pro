@@ -65,7 +65,7 @@ async function saveUser(user) {
 async function claimStripeEvent(eventId) {
   if (!eventId) throw new Error('Stripe event ID is required');
   if (isRedisConfigured()) {
-    const result = await redis('SET', ['stripe:event:' + eventId, 'processing', 'NX', 'EX', 86400]);
+    const result = await redis('SET', ['stripe:event:' + eventId, 'processing', 'NX', 'EX', 300]);
     return result === 'OK';
   }
   if (process.env.NODE_ENV === 'production') {
@@ -77,7 +77,7 @@ async function claimStripeEvent(eventId) {
 }
 async function markStripeEventProcessed(eventId) {
   if (isRedisConfigured()) {
-    await redis('SET', ['stripe:event:' + eventId, 'processed', 'EX', 86400]);
+    await redis('SET', ['stripe:event:' + eventId, 'processed', 'EX', 2592000]);
   } else {
     memory.stripeEvents[eventId] = 'processed';
   }
