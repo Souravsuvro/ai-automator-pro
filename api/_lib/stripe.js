@@ -8,7 +8,7 @@ function planFromPriceId(priceId) {
   if (!priceId) return 'free';
   if (priceId === process.env.STRIPE_PRICE_BUSINESS) return 'business';
   if (priceId === process.env.STRIPE_PRICE_PRO) return 'pro';
-  return 'pro';
+  return 'free';
 }
 async function stripeFetch(path, options) {
   options = options || {};
