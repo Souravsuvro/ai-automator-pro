@@ -19,7 +19,7 @@
 
 `WIX_APP_SECRET` is mandatory whenever Wix instance payloads are accepted. Missing configuration fails closed; unsigned instance payloads are never trusted.
 
-## Optional persistence
+## Production persistence
 
 | Variable | Purpose |
 |----------|---------|
